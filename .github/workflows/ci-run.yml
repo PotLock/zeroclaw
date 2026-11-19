@@ -18,6 +18,7 @@ env:
 
 jobs:
     changes:
+        timeout-minutes: 60
         name: Detect Change Scope
         runs-on: blacksmith-2vcpu-ubuntu-2404
         outputs:
@@ -110,6 +111,7 @@ jobs:
               run: cargo build --release --locked --verbose
 
     docs-only:
+        timeout-minutes: 60
         name: Docs-Only Fast Path
         needs: [changes]
         if: needs.changes.outputs.docs_only == 'true'
@@ -119,6 +121,7 @@ jobs:
               run: echo "Docs-only change detected. Rust lint/test/build skipped."
 
     non-rust:
+        timeout-minutes: 60
         name: Non-Rust Fast Path
         needs: [changes]
         if: needs.changes.outputs.docs_only != 'true' && needs.changes.outputs.rust_changed != 'true'
@@ -183,6 +186,7 @@ jobs:
               run: echo "No added links in changed docs lines. Link check skipped."
 
     lint-feedback:
+        timeout-minutes: 60
         name: Lint Feedback
         if: github.event_name == 'pull_request'
         needs: [changes, lint, lint-strict-delta, docs-quality]
@@ -209,6 +213,7 @@ jobs:
                       await script({github, context, core});
 
     workflow-owner-approval:
+        timeout-minutes: 60
         name: Workflow Owner Approval
         needs: [changes]
         if: github.event_name == 'pull_request' && needs.changes.outputs.workflow_changed == 'true'
@@ -229,6 +234,7 @@ jobs:
                     const script = require('./.github/workflows/scripts/ci_workflow_owner_approval.js');
                     await script({ github, context, core });
     ci-required:
+        timeout-minutes: 60
         name: CI Required Gate
         if: always()
         needs: [changes, lint, lint-strict-delta, test, build, docs-only, non-rust, docs-quality, lint-feedback, workflow-owner-approval]

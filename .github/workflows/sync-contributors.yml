@@ -16,6 +16,7 @@ permissions:
 
 jobs:
   update-notice:
+    timeout-minutes: 60
     name: Update NOTICE with new contributors
     runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:
